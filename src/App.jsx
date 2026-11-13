@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useGlitch } from 'react-powerglitch'
 import Snowfall from 'react-snowfall'
-import YouTube from 'react-youtube'
+import Homeland from './assets/Homeland.mp3'
 import './App.css'
 
 const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@%$*&!()+-'
@@ -34,11 +34,15 @@ function GlitchWordmark() {
 function App() {
   const page = useRef(null)
   const eyebrow = useRef(null)
-  const playerRef = useRef(null)
-  const [showSnow, setShowSnow] = useState(false)
-  const videoId = 'kFaFzk8zoT4' 
+  const [showSnow, setShowSnow] = useState(false) 
+  const audioRef = useRef(null)
 
   useEffect(() => {
+    if (audioRef.current){
+      audioRef.current.play().catch((err)=>{
+        console.log("Autoplay waiting for user interaction gesture:", err)
+      })
+    }
     let scrambleTimer
     const ctx = gsap.context(() => {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {setShowSnow(true);return}
@@ -99,27 +103,6 @@ function App() {
     }
   }, [])
 
-  const onPlayerReady = (event)=>{
-    playerRef.current = event.target
-    playerRef.current.unMute()
-    playerRef.current.playVideo()
-  }
-
-  const playerOptions = {
-    height: '0',
-    width: '0',
-    playerVars:{
-      autoplay: 1,
-      controls: 0,
-      disablekb: 1,
-      fs: 0,
-      modestbranding: 1,
-      rel: 0,
-      loop: 1,
-      playlist: videoId
-    }
-  }
-
   return (
     <div className="page" ref={page}>
       {showSnow &&(
@@ -133,9 +116,14 @@ function App() {
           }
         }/>
       )}
-      <div style={{ display: 'none', position: 'absolute', width: 0, height: 0 }}>
-        <YouTube videoId={videoId} opts={playerOptions} onReady={onPlayerReady} />
-      </div>
+      <audio 
+        ref={audioRef} 
+        src={Homeland} 
+        loop 
+        autoplay 
+        preload='auto' 
+        style={{display:'none'}}
+      />
       <div className="backdrop" aria-hidden="true">
         <div className="glow" />
         <div className="grain" />
