@@ -1,10 +1,12 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useGlitch } from 'react-powerglitch'
+import Snowfall from 'react-snowfall'
+import YouTube from 'react-youtube'
 import './App.css'
 
 const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@%$*&!()+-'
-// oxlint-disable react/refs -- useGlitch exposes a callback ref, not a ref object
+
 function GlitchWordmark() {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const glitch = useGlitch({
@@ -32,11 +34,14 @@ function GlitchWordmark() {
 function App() {
   const page = useRef(null)
   const eyebrow = useRef(null)
+  const playerRef = useRef(null)
+  const [showSnow, setShowSnow] = useState(false)
+  const videoId = 'kFaFzk8zoT4' 
 
   useEffect(() => {
     let scrambleTimer
     const ctx = gsap.context(() => {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {setShowSnow(true);return}
       const label = eyebrow.current.dataset.text
       let frame = 0
       scrambleTimer = setInterval(() => {
@@ -56,6 +61,7 @@ function App() {
         if (frame > label.length * 2 + 20) {
           clearInterval(scrambleTimer)
           eyebrow.current.textContent = label
+          setShowSnow(true)
         }
       }, 60)
 
@@ -93,8 +99,43 @@ function App() {
     }
   }, [])
 
+  const onPlayerReady = (event)=>{
+    playerRef.current = event.target
+    playerRef.current.unMute()
+    playerRef.current.playVideo()
+  }
+
+  const playerOptions = {
+    height: '0',
+    width: '0',
+    playerVars:{
+      autoplay: 1,
+      controls: 0,
+      disablekb: 1,
+      fs: 0,
+      modestbranding: 1,
+      rel: 0,
+      loop: 1,
+      playlist: videoId
+    }
+  }
+
   return (
     <div className="page" ref={page}>
+      {showSnow &&(
+        <Snowfall style={
+          { 
+            position: 'fixed', 
+            width: '100vw', 
+            height: '100vh', 
+            zIndex: 999, 
+            pointerEvents: 'none' 
+          }
+        }/>
+      )}
+      <div style={{ display: 'none', position: 'absolute', width: 0, height: 0 }}>
+        <YouTube videoId={videoId} opts={playerOptions} onReady={onPlayerReady} />
+      </div>
       <div className="backdrop" aria-hidden="true">
         <div className="glow" />
         <div className="grain" />
