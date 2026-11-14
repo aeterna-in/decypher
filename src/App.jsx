@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useGlitch } from 'react-powerglitch'
 import Snowfall from 'react-snowfall'
-import Homeland from './assets/Homeland.mp3'
+import Homeland from './assets/ASummerPlace.mp3'
 import './App.css'
 
 const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@%$*&!()+-'
