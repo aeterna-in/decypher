@@ -36,6 +36,19 @@ function App() {
   const eyebrow = useRef(null)
   const [showSnow, setShowSnow] = useState(false) 
   const audioRef = useRef(null)
+  const [audioUnlocked, setAudioUnlocked] = useState(false)
+
+  const handleInteraction = () => {
+    if (audioRef.current && !audioUnlocked) {
+      audioRef.current.play()
+        .then(() => {
+          setAudioUnlocked(true)
+        })
+        .catch((err) => {
+          console.log("Audio play postponed:", err)
+        })
+    }
+  }
 
   useEffect(() => {
     if (audioRef.current){
@@ -104,7 +117,17 @@ function App() {
   }, [])
 
   return (
-    <div className="page" ref={page}>
+    <div className="page" ref={page} onClick={handleInteraction} onTouchStart={handleInteraction}>
+    {!audioUnlocked && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 9999,
+          background: 'transparent',
+          pointerEvents: 'auto',
+          cursor: 'auto'
+        }} />
+      )}
       {showSnow &&(
         <Snowfall style={
           { 
@@ -142,6 +165,7 @@ function App() {
         </p>
 
         <GlitchWordmark />
+        <span className='launching'>Tap to play audio</span>
       </main>
 
       <footer className="footer">
