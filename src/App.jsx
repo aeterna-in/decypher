@@ -165,6 +165,7 @@ function App() {
         </p>
 
         <GlitchWordmark />
+        <span className='launching'>Tap to play audio</span>
       </main>
 
       <footer className="footer">
